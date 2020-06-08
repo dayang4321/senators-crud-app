@@ -1,26 +1,19 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React,{useContext} from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import Senators from './components/Senators/Senators';
+import Auth from './components/Auth'
+import {AuthContext} from './context/authContext'
+
+const App = props => {
+  const authContext = useContext(AuthContext);
+
+  let page = <Auth />;
+
+  if (authContext.isAuth) {
+    page=<Senators/>
+  }
+
+  return page;
+};
 
 export default App;
