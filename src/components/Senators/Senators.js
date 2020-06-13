@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useReducer, useMemo } from 'react';
+import React, { useEffect, useCallback, useReducer, useMemo, useState } from 'react';
 
 import SenatorForm from './SenatorForm/SenatorForm2';
 import SenatorsList from './SenatorsList/SenatorsList'
@@ -28,20 +28,25 @@ const senateReducer = (currentSenators, action) => {
 const Senators = () => {
 
   const [userSenators, senDispatch] = useReducer(senateReducer, []);
-  const { isAddLoading,isDeleteLoading, hasError, data,extra,identifier, sendRequest, clearError } = useHttp();
+  const { isAddLoading, isDeleteLoading, hasError, data, extra, identifier, sendRequest, clearError } = useHttp();
+  const [fetchLoading, setFetchLoading] = useState( isAddLoading);
  
 
   useEffect(() =>
   {
-    if (!isDeleteLoading && !hasError && (identifier === 'REMOVING')) {
+    if (!isDeleteLoading && !isAddLoading && !hasError && (identifier === 'REMOVING')) {
       senDispatch({ type: 'DELETE', id: extra })
     }
-    if(!isAddLoading && !hasError && (identifier === 'ADDING')){
+    if(!isDeleteLoading && !isAddLoading && !hasError && (identifier === 'ADDING')){
       senDispatch({type: 'ADD', senator: extra, id:data.name  })
     }
   }
       , [isAddLoading,isDeleteLoading,hasError, extra,identifier,data]);
 
+  const fetchLoader = useCallback((isAddLoading)=> {
+    setFetchLoading(isAddLoading)
+    return fetchLoading
+  },[isAddLoading,setFetchLoading,fetchLoading])
 
   const filteredSenHandler = useCallback( filteredSenator => {
 
@@ -65,10 +70,14 @@ const Senators = () => {
     clearError();
   
   },[clearError])
+  console.log(isAddLoading);
 
   const senatorsList = useMemo(() => {
-    return(<SenatorsList senators={userSenators} onRemoveItem={removeSenatorHandler} />)
-  },[userSenators,removeSenatorHandler])
+    return (<SenatorsList senators={userSenators} onRemoveItem={removeSenatorHandler} load={isAddLoading}
+      
+    //  deleteLoading={isDeleteLoading}
+    />)
+  },[userSenators,removeSenatorHandler,])
 
   return (
     <div className="App">
@@ -80,7 +89,10 @@ const Senators = () => {
        
         <Grid item xs={12} sm={7} md={8}>
         <section>
-        <Search onLoadSenators={filteredSenHandler}/>
+            <Search
+              onLoadSenators={filteredSenHandler} 
+              searchLoading={fetchLoader}
+            />
         {senatorsList}
       </section>
         </Grid>

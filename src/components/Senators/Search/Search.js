@@ -8,21 +8,29 @@ import ErrorModal from '../../UI/ErrorModal';
 
 const Search = React.memo(props => {
   const [inputedFilter, setInputedFilter] = useState('');
-  const { onLoadSenators } =  props ;
+  const { onLoadSenators, searchLoading } =  props ;
   const inputRef = useRef();
-  const {isLoading,data,hasError,sendRequest,clearError } = useHttp();
+  const {isAddLoading,data,hasError,sendRequest,clearError } = useHttp();
   
   useEffect(() => {
    const timer = setTimeout(() => {
       if (inputedFilter === inputRef.current.value) {
         const queryParams = inputedFilter.length === 0 ? '' :`?orderBy="name"&startAt="${inputedFilter.toUpperCase()}"&endAt="${inputedFilter.toUpperCase()}\uf8ff"`;
-        sendRequest('https://senators-crud-app.firebaseio.com/senators.json' + queryParams,'GET')      
+        sendRequest('https://senators-crud-app.firebaseio.com/senators.json' + queryParams, 'GET')     
+      
       }
    }, 1000);
+    ;
     return (() => { clearTimeout(timer) });
-  }, [inputedFilter, sendRequest,]);
+  }, [inputedFilter, sendRequest]);
   
-  useEffect(()=>{ if (!isLoading && data && !hasError) {
+  useEffect(() => {
+    
+  
+    if (!data) { searchLoading(true) };
+    if (data){searchLoading(false)}
+    
+    if (!isAddLoading && data && !hasError) {
     let loadedSenators = [];
     for (const key in data) {
       loadedSenators.push({
@@ -35,7 +43,11 @@ const Search = React.memo(props => {
         constituency: data[key].constituency
       } )  };
       onLoadSenators(loadedSenators);
-  }},[data, hasError, isLoading, onLoadSenators])
+  }
+  }, [data, hasError, isAddLoading, onLoadSenators,searchLoading])
+  
+
+
 
   return (
     <section className="search">
