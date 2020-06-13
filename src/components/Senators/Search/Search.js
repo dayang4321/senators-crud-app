@@ -5,6 +5,7 @@ import './Search.css';
 import useHttp from '../../../hooks/http';
 import ErrorModal from '../../UI/ErrorModal';
 
+
 const Search = React.memo(props => {
   const [inputedFilter, setInputedFilter] = useState('');
   const { onLoadSenators } =  props ;
@@ -14,8 +15,8 @@ const Search = React.memo(props => {
   useEffect(() => {
    const timer = setTimeout(() => {
       if (inputedFilter === inputRef.current.value) {
-        const queryParams = inputedFilter.length === 0 ? '' :`?orderBy="name"&startAt="${inputedFilter}"&endAt="${inputedFilter}\uf8ff"`;
-        sendRequest('https://react-hooks-44804.firebaseio.com/senators.json' + queryParams,'GET')      
+        const queryParams = inputedFilter.length === 0 ? '' :`?orderBy="name"&startAt="${inputedFilter.toUpperCase()}"&endAt="${inputedFilter.toUpperCase()}\uf8ff"`;
+        sendRequest('https://senators-crud-app.firebaseio.com/senators.json' + queryParams,'GET')      
       }
    }, 1000);
     return (() => { clearTimeout(timer) });
@@ -26,8 +27,12 @@ const Search = React.memo(props => {
     for (const key in data) {
       loadedSenators.push({
         id: key,
-        title: data[key].title,
-        amount: data[key].amount,
+        firstName: data[key].firstName,
+        lastName: data[key].lastName,
+        state: data[key].state,
+        email: data[key].email,
+        phone: data[key].phone,
+        constituency: data[key].constituency
       } )  };
       onLoadSenators(loadedSenators);
   }},[data, hasError, isLoading, onLoadSenators])

@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useReducer, useMemo } from 'react';
 
-import SenatorForm from './SenatorForm/SenatorForm';
+import SenatorForm from './SenatorForm/SenatorForm2';
 import SenatorsList from './SenatorsList/SenatorsList'
 import Search from './Search/Search';
 import ErrorModal from '../UI/ErrorModal'
@@ -28,19 +28,19 @@ const senateReducer = (currentSenators, action) => {
 const Senators = () => {
 
   const [userSenators, senDispatch] = useReducer(senateReducer, []);
-  const { isLoading, hasError, data,extra,identifier, sendRequest, clearError } = useHttp();
+  const { isAddLoading,isDeleteLoading, hasError, data,extra,identifier, sendRequest, clearError } = useHttp();
  
 
   useEffect(() =>
   {
-    if (!isLoading && !hasError && (identifier === 'REMOVING')) {
+    if (!isDeleteLoading && !hasError && (identifier === 'REMOVING')) {
       senDispatch({ type: 'DELETE', id: extra })
     }
-    if(!isLoading && !hasError && (identifier === 'ADDING')){
+    if(!isAddLoading && !hasError && (identifier === 'ADDING')){
       senDispatch({type: 'ADD', senator: extra, id:data.name  })
     }
   }
-      , [isLoading,hasError, extra,identifier,data]);
+      , [isAddLoading,isDeleteLoading,hasError, extra,identifier,data]);
 
 
   const filteredSenHandler = useCallback( filteredSenator => {
@@ -49,15 +49,15 @@ const Senators = () => {
   },[])
 
   const addSenHandler = useCallback((senator) => {
-    sendRequest('https://react-hooks-44804.firebaseio.com/senators.json','POST',JSON.stringify(senator),senator,'ADDING')
+    sendRequest('https://senators-crud-app.firebaseio.com/senators.json','POST',JSON.stringify(senator),senator,'ADDING')
 
 
     
   },[sendRequest])
   
-  const removeSenatorHandler = useCallback(SenatorId => {
+  const removeSenatorHandler = useCallback(senatorId => {
 
-    sendRequest(`https://react-hooks-44804.firebaseio.com/Senators/${SenatorId}.json`,'DELETE',null, SenatorId,'REMOVING')
+    sendRequest(`https://senators-crud-app.firebaseio.com/senators/${senatorId}.json`,'DELETE',null, senatorId,'REMOVING')
   
   },[sendRequest]);
 
@@ -75,7 +75,7 @@ const Senators = () => {
       <Grid container>
       {hasError && <ErrorModal onClose={clear}>{hasError}</ErrorModal>}
         <Grid item xs={12} sm={5} md={4}>
-        <SenatorForm addSenHandler={addSenHandler} loading={isLoading} />
+        <SenatorForm addSenHandler={addSenHandler} loading={isAddLoading} />
         </Grid>
        
         <Grid item xs={12} sm={7} md={8}>

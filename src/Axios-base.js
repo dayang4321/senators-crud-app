@@ -1,7 +1,7 @@
 import Axios from 'axios'
 
 const instance = Axios.create({
-    baseURL: 'https://dave-s-burger-builder.firebaseio.com/'
+    baseURL: 'https://senators-crud-app.firebaseio.com/'
 });
 
 

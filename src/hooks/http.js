@@ -1,14 +1,20 @@
 import { useReducer,useCallback } from 'react'
 
-const initialState = { loading: false, error: null, data: null, extra: null, identifier: null };
+const initialState = { deleteLoading : false, addLoading: false, error: null, data: null, extra: null, identifier: null };
 
 const httpReducer = (httpState, action) => {
+    let loadstate = {};
     switch (action.type) {
-      case 'SENDING': return {loading:true, error:null, data: null, extra: null,identifier: action.identifier}
       
-      case 'SUCCESS': return {...httpState, loading:false, data: action.responseData, extra: action.extra, }
+
+        case 'SENDING': {
+           loadstate = action.identifier === "REMOVING" ? { deleteLoading: true } : { addLoading: true } ;
+            return { ...httpState,...loadstate, error: null, data: null, extra: null, identifier: action.identifier }
+    }
+
+      case 'SUCCESS': return {...httpState, deleteLoading:false, addLoading: false , data: action.responseData, extra: action.extra, }
         
-      case 'FAILURE': return { ...httpState, loading: false, error: action.error,};
+      case 'FAILURE': return { ...httpState,deleteLoading:false, addLoading: false, error: action.error,};
       
       case 'CLEAR': return initialState
       default: throw Error('This should not happen')
@@ -55,7 +61,8 @@ const useHttp = () => {
             })
     },[]);
     return {
-        isLoading: httpState.loading,
+        isAddLoading: httpState.addLoading,
+        isDeleteLoading: httpState.deleteLoading,
         hasError: httpState.error,
         data: httpState.data,
         extra: httpState.extra,
