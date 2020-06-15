@@ -217,3 +217,183 @@ export default function CustomizedInputs() {
     </form>
   );
 }
+
+
+import { Popconfirm, message } from 'antd';
+
+function confirm(e) {
+  console.log(e);
+  message.success('Click on Yes');
+}
+
+function cancel(e) {
+  console.log(e);
+  message.error('Click on No');
+}
+
+  <Popconfirm
+    title="Are you sure delete this task?"
+    onConfirm={confirm}
+    onCancel={cancel}
+    okText="Yes"
+    cancelText="No"
+  >
+    <a href="#">Delete</a>
+</Popconfirm>
+  
+
+
+  import { Popover,Tooltip, Button } from 'antd';
+
+const MyPopover = props => {
+ 
+  [show, setshow] = useState({
+    clicked: false,
+    hovered: false,
+  });
+
+    
+    hide = () => {
+      setShow({
+        clicked: false,
+        hovered: false,
+      });
+    };
+  
+    handleHoverChange = visible => {
+      setShow({
+        hovered: visible,
+        clicked: false,
+      });
+    };
+  
+    handleClickChange = visible => {
+      setShow({
+        clicked: visible,
+        hovered: false,
+      });
+    };
+ 
+      const hoverContent = <div>This is hover content.</div>;
+      const clickContent = <div>This is click content.</div>;
+      return (
+        <Tooltip
+          style={{ width: 500 }}
+          content={hoverContent}
+          title="Hover title"
+          trigger="hover"
+          visible={this.state.hovered}
+          onVisibleChange={this.handleHoverChange}
+        >
+          <Popover
+            content={
+              <div>
+                {clickContent}
+                <a onClick={this.hide}>Close</a>
+              </div>
+            }
+            title="Click title"
+            trigger="click"
+            visible={this.state.clicked}
+            onVisibleChange={this.handleClickChange}
+          >
+            <Button>Hover and click / 悬停并单击</Button>
+          </Popover>
+        </Tooltip>
+      );
+    
+  }
+  
+
+
+  import React, { useState } from 'react';
+  import { Button, Modal, Form, Input, Radio } from 'antd';
+  
+  const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
+    const [form] = Form.useForm();
+    return (
+      <Modal
+        visible={visible}
+        title="Create a new collection"
+        okText="Create"
+        cancelText="Cancel"
+        onCancel={onCancel}
+        onOk={() => {
+          form
+            .validateFields()
+            .then(values => {
+              form.resetFields();
+              onCreate(values);
+            })
+            .catch(info => {
+              console.log('Validate Failed:', info);
+            });
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          name="form_in_modal"
+          initialValues={{
+            modifier: 'public',
+          }}
+        >
+          <Form.Item
+            name="title"
+            label="Title"
+            rules={[
+              {
+                required: true,
+                message: 'Please input the title of collection!',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" label="Description">
+            <Input type="textarea" />
+          </Form.Item>
+          <Form.Item name="modifier" className="collection-create-form_last-form-item">
+            <Radio.Group>
+              <Radio value="public">Public</Radio>
+              <Radio value="private">Private</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Form>
+      </Modal>
+    );
+  };
+  
+  const CollectionsPage = () => {
+    const [visible, setVisible] = useState(false);
+  
+    const onCreate = values => {
+      console.log('Received values of form: ', values);
+      setVisible(false);
+    };
+  
+    return (
+      <div>
+        <Button
+          type="primary"
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          New Collection
+        </Button>
+        <CollectionCreateForm
+          visible={visible}
+          onCreate={onCreate}
+          onCancel={() => {
+            setVisible(false);
+          }}
+        />
+      </div>
+    );
+  };
+  
+  ReactDOM.render(<CollectionsPage />, mountNode);
+  .collection-create-form_last-form-item {
+    margin-bottom: 0;
+  }

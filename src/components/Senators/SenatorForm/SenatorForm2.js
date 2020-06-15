@@ -2,17 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 
 import Card from '../../UI/Card';
-import LoadingIndicator from '../../UI/LoadingIndicator'
 import { Form, Input, Button, Select } from 'antd';
 import './SenatorForm.css';
 
 import Axios from 'axios'
 
 
+
 const { Option } = Select;
-const layout = {
- 
-};
+
 const tailLayout = {
   wrapperCol: {
     offset: 8,
@@ -23,7 +21,7 @@ const tailLayout = {
 
 const SenatorForm = React.memo(props => {
  
-  
+  const { returner } = props;
     //Independent state mgt
     const [inputedFirstName, setInputedFirstName] = useState('');
     const [inputedLastName, setInputedLastName] = useState('');
@@ -32,8 +30,18 @@ const SenatorForm = React.memo(props => {
     const [inputedState, setInputedState] = useState('');
     const [inputedConstituency, setInputedConstituency] = useState('');
     const [fetchedStates, setFetchedStates] = useState([]);
+
+  
     
     const constituencies = ['North-West','North','North-East','East','South-East', 'South','South-West', 'West', 'Central' ]
+  
+  const stateMenu = fetchedStates.map(state => (
+    <Option value={state} key={state}>{state}</Option>
+  ));;
+  
+    const constituencyMenu = constituencies.map(constituency => (
+      <Option value={constituency} key={constituency}>{constituency}</Option>
+    ));
   
     useEffect(() => {
       let states = [];
@@ -45,21 +53,20 @@ const SenatorForm = React.memo(props => {
             res.data.map(state => states.push(state.name))
             console.log(states);
             setFetchedStates(states);
+            
+            returner(states.map(state => (
+              <Option value={state} key={state}>{state}</Option>
+            )), constituencyMenu);
           }
          
       )
-      .catch(err=>console.log(err))
-    },[setFetchedStates])
+        .catch(err => console.log(err))
+      
+    },[setFetchedStates,returner])
     
   
-    const stateMenu = fetchedStates.map(state => (
-      <Option value={state} key={state}>{state}</Option>
-    ));
-  
-    const constituencyMenu = constituencies.map(constituency => (
-      <Option value={constituency} key={constituency}>{constituency}</Option>
-    ));
-    
+   
+
   
     const submitHandler = event => {
   //   event.preventDefault();
@@ -75,7 +82,9 @@ const SenatorForm = React.memo(props => {
       // ...
     };
   
-    return (
+  return (
+    <>
+   
       <section className="senator-form">
         <Card>
             <Form layout={'vertical'} hideRequiredMark name="Senator Form" onFinish={submitHandler} >
@@ -93,6 +102,9 @@ const SenatorForm = React.memo(props => {
         </Form.Item>
         </Form.Item>    
             
+
+
+
          <Form.Item name="state" label="Senator Home State"
             rules={[{ required: true,},]} value={inputedState}>
         <Select
@@ -135,6 +147,7 @@ const SenatorForm = React.memo(props => {
   </Card>
         
       </section>
+      </>
     );
   });
   

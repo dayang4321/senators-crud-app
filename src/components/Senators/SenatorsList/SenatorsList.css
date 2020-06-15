@@ -7,6 +7,7 @@
 .senators-list h2 {
   border-bottom: 3px solid #ccc;
   padding-bottom: 1rem;
+  justify-content: space-between;
 }
 
 .senators-list ul {

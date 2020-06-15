@@ -6,14 +6,20 @@ import Search from './Search/Search';
 import ErrorModal from '../UI/ErrorModal'
 import useHttp from '../../hooks/http'
 
-import { Grid } from '@material-ui/core'
+import { Row, Col } from 'antd';
 import Axios from '../../Axios-base'
+import { Update } from '@material-ui/icons';
 
 
 const senateReducer = (currentSenators, action) => {
   switch (action.type) {
     case 'SET': return action.senators
     
+    case 'EDIT': {
+      let senatorsCpy = [...currentSenators];
+      senatorsCpy[action.index] = action.update;
+      return  senatorsCpy
+}
     case 'ADD': return [
       ...currentSenators,
       { ...action.senator, id: action.id },
@@ -29,16 +35,22 @@ const Senators = () => {
 
   const [userSenators, senDispatch] = useReducer(senateReducer, []);
   const { isAddLoading, isDeleteLoading, hasError, data, extra, identifier, sendRequest, clearError } = useHttp();
-  const [fetchLoading, setFetchLoading] = useState( isAddLoading);
+  const [fetchLoading, setFetchLoading] = useState(isAddLoading);
+  const [options, setOptions] = useState({});
  
 
   useEffect(() =>
+
   {
+   
     if (!isDeleteLoading && !isAddLoading && !hasError && (identifier === 'REMOVING')) {
       senDispatch({ type: 'DELETE', id: extra })
     }
     if(!isDeleteLoading && !isAddLoading && !hasError && (identifier === 'ADDING')){
       senDispatch({type: 'ADD', senator: extra, id:data.name  })
+    }
+    if(!isDeleteLoading && !isAddLoading && !hasError && (identifier === 'EDITING')){
+      senDispatch({type: 'EDIT', update: extra.update, id: extra.update.id , index: extra.index}, )
     }
   }
       , [isAddLoading,isDeleteLoading,hasError, extra,identifier,data]);
@@ -46,19 +58,24 @@ const Senators = () => {
   const fetchLoader = useCallback((isAddLoading)=> {
     setFetchLoading(isAddLoading)
     return fetchLoading
-  },[isAddLoading,setFetchLoading,fetchLoading])
+  },[fetchLoading])
 
   const filteredSenHandler = useCallback( filteredSenator => {
 
     senDispatch({type: 'SET', senators: filteredSenator, })
-  },[])
+  }
+    , [])
 
   const addSenHandler = useCallback((senator) => {
     sendRequest('https://senators-crud-app.firebaseio.com/senators.json','POST',JSON.stringify(senator),senator,'ADDING')
-
-
     
-  },[sendRequest])
+  }, [sendRequest])
+  
+  const editSenatorHandler = useCallback((update, senatorId,index )=> {
+
+    sendRequest(`https://senators-crud-app.firebaseio.com/senators/${senatorId}.json`, 'PUT', JSON.stringify(update), { update: { ...update, id: senatorId }, index:index },'EDITING')
+  
+  },[sendRequest]);
   
   const removeSenatorHandler = useCallback(senatorId => {
 
@@ -71,23 +88,36 @@ const Senators = () => {
   
   },[clearError])
   console.log(isAddLoading);
+  
+  const returner = useCallback((a,b) => {
+    setOptions({ states:  a , constituencies:  b })
+  },[setOptions])
+ 
 
   const senatorsList = useMemo(() => {
-    return (<SenatorsList senators={userSenators} onRemoveItem={removeSenatorHandler} load={isAddLoading}
-      
-    //  deleteLoading={isDeleteLoading}
+    return (<SenatorsList senators={userSenators} onRemoveItem={removeSenatorHandler} onEditItem={editSenatorHandler}
+      //load={(isAddLoading || isDeleteLoading)}
+      load={true}
+      //  deleteLoading={isDeleteLoading}
+      stateMenu={options.states}
+      constituencyMenu = {options.constituencies}
     />)
-  },[userSenators,removeSenatorHandler,])
+  },[userSenators,removeSenatorHandler,options])
+
+  
+
 
   return (
     <div className="App">
-      <Grid container>
+      <Row >
       {hasError && <ErrorModal onClose={clear}>{hasError}</ErrorModal>}
-        <Grid item xs={12} sm={5} md={4}>
-        <SenatorForm addSenHandler={addSenHandler} loading={isAddLoading} />
-        </Grid>
+        <Col xs={24} sm={10} md={8}>
+          <SenatorForm addSenHandler={addSenHandler} loading={isAddLoading}
+            returner={returner} />
+          
+        </Col>
        
-        <Grid item xs={12} sm={7} md={8}>
+        <Col xs={24} sm={14} md={16}>
         <section>
             <Search
               onLoadSenators={filteredSenHandler} 
@@ -95,10 +125,10 @@ const Senators = () => {
             />
         {senatorsList}
       </section>
-        </Grid>
+        </Col>
 
     
-      </Grid>
+      </Row>
       
     </div>
   );
