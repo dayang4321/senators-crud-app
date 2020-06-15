@@ -1,6 +1,6 @@
 import { useReducer,useCallback } from 'react'
 
-const initialState = { deleteLoading : false, addLoading: false, error: null, data: null, extra: null, identifier: null };
+const initialState = { deleteLoading : false, addLoading: false, editLoading: false, error: null, data: null, extra: null, identifier: null };
 
 const httpReducer = (httpState, action) => {
     let loadstate = {};
@@ -8,13 +8,16 @@ const httpReducer = (httpState, action) => {
       
 
         case 'SENDING': {
-           loadstate = action.identifier === "REMOVING" ? { deleteLoading: true } : { addLoading: true } ;
+          if (action.identifier === "REMOVING" ){ loadstate = { deleteLoading: true } }
+            if (action.identifier === "ADDING") { loadstate = { addLoading: true } }
+            if (action.identifier === "EDITING") { loadstate = { editLoading: true }   }
+         
             return { ...httpState,...loadstate, error: null, data: null, extra: null, identifier: action.identifier }
     }
 
-      case 'SUCCESS': return {...httpState, deleteLoading:false, addLoading: false , data: action.responseData, extra: action.extra, }
+      case 'SUCCESS': return {...httpState, deleteLoading:false,editLoading:false, addLoading: false , data: action.responseData, extra: action.extra, }
         
-      case 'FAILURE': return { ...httpState,deleteLoading:false, addLoading: false, error: action.error,};
+      case 'FAILURE': return { ...httpState,deleteLoading:false, addLoading: false,editLoading:false, error: action.error};
       
       case 'CLEAR': return initialState
       default: throw Error('This should not happen')
@@ -63,6 +66,7 @@ const useHttp = () => {
     return {
         isAddLoading: httpState.addLoading,
         isDeleteLoading: httpState.deleteLoading,
+        isEditLoading: httpState.editLoading,
         hasError: httpState.error,
         data: httpState.data,
         extra: httpState.extra,

@@ -4,6 +4,7 @@ import EditModal from '../Form Modals/EditModal'
 import './SenatorsList.css';
 import { IconButton } from '@material-ui/core'
 import { Tooltip } from 'antd';
+import { Skeleton } from 'antd';
 import { Spin } from 'antd';
 import { MyPopconfirm } from '../../../components/UI/Popconfirm/Popconfirm'
 import {MyPopover} from '../../../components/UI/Popconfirm/SwitchPop'
@@ -34,7 +35,7 @@ setCurrentSenator({})
         
         <MyPopover tipTitle="Edit Senator" popTitle={"Edit Senator " + senator.lastName + "'s profile?"}
           confirmAction={
-          ()=> show(senator)
+            () => show(senator)
            } >
         <IconButton aria-label="" >
         <Edit />
@@ -67,7 +68,7 @@ setCurrentSenator({})
     <section className="senators-list">
       <h2>The Senate <span style={{textAlign: 'right'}}>{props.load? <Spin/>:null}</span> </h2>
       <ul>
-        {senateList}
+        {!props.fetchLoad ? senateList : <Skeleton loading={true} />}
       </ul>
       </section>
       </>

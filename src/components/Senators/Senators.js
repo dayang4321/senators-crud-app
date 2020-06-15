@@ -11,6 +11,7 @@ import Axios from '../../Axios-base'
 import { Update } from '@material-ui/icons';
 
 
+
 const senateReducer = (currentSenators, action) => {
   switch (action.type) {
     case 'SET': return action.senators
@@ -34,7 +35,7 @@ const senateReducer = (currentSenators, action) => {
 const Senators = () => {
 
   const [userSenators, senDispatch] = useReducer(senateReducer, []);
-  const { isAddLoading, isDeleteLoading, hasError, data, extra, identifier, sendRequest, clearError } = useHttp();
+  const { isAddLoading, isDeleteLoading,isEditLoading, hasError, data, extra, identifier, sendRequest, clearError } = useHttp();
   const [fetchLoading, setFetchLoading] = useState(isAddLoading);
   const [options, setOptions] = useState({});
  
@@ -43,22 +44,22 @@ const Senators = () => {
 
   {
    
-    if (!isDeleteLoading && !isAddLoading && !hasError && (identifier === 'REMOVING')) {
+    if (!isDeleteLoading && !isAddLoading && !isEditLoading && !hasError && (identifier === 'REMOVING')) {
       senDispatch({ type: 'DELETE', id: extra })
     }
-    if(!isDeleteLoading && !isAddLoading && !hasError && (identifier === 'ADDING')){
+    if(!isDeleteLoading && !isAddLoading &&!isEditLoading &&  !hasError && (identifier === 'ADDING')){
       senDispatch({type: 'ADD', senator: extra, id:data.name  })
     }
-    if(!isDeleteLoading && !isAddLoading && !hasError && (identifier === 'EDITING')){
+    if(!isDeleteLoading && !isAddLoading && !isEditLoading && !hasError && (identifier === 'EDITING')){
       senDispatch({type: 'EDIT', update: extra.update, id: extra.update.id , index: extra.index}, )
     }
   }
-      , [isAddLoading,isDeleteLoading,hasError, extra,identifier,data]);
+      , [isAddLoading,isDeleteLoading,isEditLoading,hasError, extra,identifier,data]);
 
   const fetchLoader = useCallback((isAddLoading)=> {
     setFetchLoading(isAddLoading)
-    return fetchLoading
-  },[fetchLoading])
+    
+  },[])
 
   const filteredSenHandler = useCallback( filteredSenator => {
 
@@ -97,12 +98,13 @@ const Senators = () => {
   const senatorsList = useMemo(() => {
     return (<SenatorsList senators={userSenators} onRemoveItem={removeSenatorHandler} onEditItem={editSenatorHandler}
       //load={(isAddLoading || isDeleteLoading)}
-      load={isAddLoading}
+      load={isAddLoading || isEditLoading || isDeleteLoading}
+      fetchLoad={fetchLoading}
       //  deleteLoading={isDeleteLoading}
       stateMenu={options.states}
       constituencyMenu = {options.constituencies}
     />)
-  },[userSenators,removeSenatorHandler,options,isAddLoading])
+  },[userSenators,removeSenatorHandler,editSenatorHandler,options,isAddLoading,isDeleteLoading,isEditLoading])
 
   
 
@@ -123,7 +125,7 @@ const Senators = () => {
               onLoadSenators={filteredSenHandler} 
               searchLoading={fetchLoader}
             />
-        {senatorsList}
+            {senatorsList}
       </section>
         </Col>
 
