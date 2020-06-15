@@ -17,13 +17,13 @@ const SenatorsList = React.memo(props => {
     console.log('Received values of form: ', values);
     setEditModalVisible(false);
     props.onEditItem(values, currentSenator.id, props.senators.indexOf(currentSenator))
-    console.log(props.senators, props.senators.indexOf(currentSenator))
+setCurrentSenator({})
   };
 
 
   const show = (senator) => {
-    setEditModalVisible(true);
     setCurrentSenator(senator);
+    setEditModalVisible(true);
   };
   let senateList = <p>Add senators!</p>;
 
@@ -34,7 +34,7 @@ const SenatorsList = React.memo(props => {
         
         <MyPopover tipTitle="Edit Senator" popTitle={"Edit Senator " + senator.lastName + "'s profile?"}
           confirmAction={
-          ()=>show(senator)
+          ()=> show(senator)
            } >
         <IconButton aria-label="" >
         <Edit />
@@ -55,14 +55,15 @@ const SenatorsList = React.memo(props => {
   ))}
   return (
     <>
-    <EditModal
-    visible={editModalVisible}    onCreate={onCreate}
+   {editModalVisible? <EditModal
+        visible={true}
+        onCreate={onCreate}
         stateMenu={props.stateMenu} constituencyMenu={props.constituencyMenu}
-        initialValues={currentSenator}
+        initialValues={{...currentSenator }}
         
     onCancel={() => {
       setEditModalVisible(false);
-    }} />
+    }} />: null}
     <section className="senators-list">
       <h2>The Senate <span style={{textAlign: 'right'}}>{props.load? <Spin/>:null}</span> </h2>
       <ul>

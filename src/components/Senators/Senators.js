@@ -97,12 +97,12 @@ const Senators = () => {
   const senatorsList = useMemo(() => {
     return (<SenatorsList senators={userSenators} onRemoveItem={removeSenatorHandler} onEditItem={editSenatorHandler}
       //load={(isAddLoading || isDeleteLoading)}
-      load={true}
+      load={isAddLoading}
       //  deleteLoading={isDeleteLoading}
       stateMenu={options.states}
       constituencyMenu = {options.constituencies}
     />)
-  },[userSenators,removeSenatorHandler,options])
+  },[userSenators,removeSenatorHandler,options,isAddLoading])
 
   
 

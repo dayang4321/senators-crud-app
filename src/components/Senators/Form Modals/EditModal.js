@@ -3,7 +3,8 @@ import { Button, Modal, Form, Input, Radio,Select } from 'antd';
 
 const EditModal = (props) => {
     const [form] = Form.useForm();
- 
+    console.log(props.initialValues);
+   const initValues = props.initialValues;
   return (
     <Modal
       visible={props.visible}
@@ -14,11 +15,17 @@ const EditModal = (props) => {
       onOk={() => {
           form
               .validateFields()
-          .then(values => {
+              .then(values => {
             
-              props.onCreate(values);
-              form.resetFields();
-              console.log(props.initialValues);
+                  props.onCreate(values);
+           
+                  form.setFieldsValue({firstName: initValues.firstName,
+                      lastName: initValues.lastName,
+                      state: initValues.state,
+                      constituency: initValues.constituency,
+                      phone: initValues.phone,
+                      email: initValues.email})
+             
           })
           .catch(info => {
             console.log('Validate Failed:', info);
@@ -27,16 +34,16 @@ const EditModal = (props) => {
     >
       <Form
               form={form}
-              size="small"
+              
         layout="vertical"
         hideRequiredMark name="Senator Edit Form"
         initialValues={
-      {firstName: props.initialValues.firstName,
-        lastName: props.initialValues.lastName,
-        state: props.initialValues.state,
-        constituency: props.initialValues.constituency,
-        phone: props.initialValues.phone,
-        email: props.initialValues.email}
+      {firstName: initValues.firstName,
+        lastName: initValues.lastName,
+        state: initValues.state,
+        constituency: initValues.constituency,
+        phone: initValues.phone,
+        email: initValues.email}
         }
       >
 
@@ -44,23 +51,22 @@ const EditModal = (props) => {
         <Form.Item hasFeedback  name="firstName"
           rules={[{ required: true, pattern: /^[a-z ]+$/i, message: "Enter a valid First name"}]}
           style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}>
-          <Input placeholder="First Name"   />
+          <Input placeholder="First Name"    />
         </Form.Item>
         <Form.Item hasFeedback  name="lastName" rules={[{ required: true, pattern: /^[a-z ]+$/i, message: "Enter a valid Last name" }]}
-          style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }}
-        >
-          <Input placeholder="Last Name"  />
+          style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 8px' }} >
+          <Input placeholder="Last Name" ></Input >
         </Form.Item>
         </Form.Item>    
 
-        <Form.Item  shouldUpdate name="state" label="Senator Home State"
+        <Form.Item  shouldUpdate  name="state" label="Senator Home State"
             rules={[{ required: true}]} >
-        <Select
+        <Select  
           placeholder="Select the senator's home state" >
          {props.stateMenu}
         </Select>
         </Form.Item>
-        <Form.Item  shouldUpdate name="constituency" label="Senator's Constituency"
+        <Form.Item  shouldUpdate name="constituency" label="Senator's Constituency" 
             rules={[{ required: true}]} >
           <Select
             placeholder="Select the senatorial district/constituency"  >
@@ -68,18 +74,18 @@ const EditModal = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.Item  shouldUpdate name="email" label="Senator's Email" hasFeedback
+        <Form.Item  shouldUpdate name="email" label="Senator's Email" hasFeedback 
           rules={[{            
           required: false, type:"email", message: "Enter a valid email address",}]}>
           <Input type="email" />
         </Form.Item>      
 
-        <Form.Item  shouldUpdate name="phone" label="Phone No." hasFeedback
+        <Form.Item  shouldUpdate name="phone" label="Phone No." hasFeedback 
           rules={[{            
           required: false, pattern: /^\+?(\d.*){11,}$/, min:11,
           message: "Enter a valid phone number", 
               },]}>
-          <Input type="tel"  maxLength={11}  />
+          <Input type="tel"  maxLength={11}/>
         </Form.Item>
 
       </Form>
