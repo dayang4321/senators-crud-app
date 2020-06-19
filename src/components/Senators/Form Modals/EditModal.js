@@ -19,14 +19,14 @@ const EditModal = (props) => {
             
                   props.onCreate(values);
            
-                  form.setFieldsValue({firstName: initValues.firstName,
-                      lastName: initValues.lastName,
-                      state: initValues.state,
-                      constituency: initValues.constituency,
-                      phone: initValues.phone,
-                      email: initValues.email})
+          //         form.setFieldsValue({firstName: initValues.firstName,
+          //             lastName: initValues.lastName,
+          //             state: initValues.state,
+          //             constituency: initValues.constituency,
+          //             phone: initValues.phone,
+          //             email: initValues.email})
              
-          })
+           })
           .catch(info => {
             console.log('Validate Failed:', info);
           });

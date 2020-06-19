@@ -1,4 +1,5 @@
-import { useReducer,useCallback } from 'react'
+import { useReducer, useCallback } from 'react'
+import { message } from 'antd';
 
 const initialState = { deleteLoading : false, addLoading: false, editLoading: false, error: null, data: null, extra: null, identifier: null };
 
@@ -53,7 +54,8 @@ const useHttp = () => {
                     responseData: responseData,
                     extra: reqExtra,
                   
-                })
+                });
+                message.info('ok') 
             })
             .catch(error => {
                 httpDispatch({

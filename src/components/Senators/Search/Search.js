@@ -15,7 +15,7 @@ const Search = React.memo(props => {
   useEffect(() => {
    const timer = setTimeout(() => {
       if (inputedFilter === inputRef.current.value) {
-        const queryParams = inputedFilter.length === 0 ? '' :`?orderBy="name"&startAt="${inputedFilter.toUpperCase()}"&endAt="${inputedFilter.toUpperCase()}\uf8ff"`;
+        const queryParams = inputedFilter.length === 0 ? '' :`?orderBy="firstName"&startAt="${inputedFilter.toLowerCase()}"&endAt="${inputedFilter.toLowerCase() + '\uf8ff'}"`;
         sendRequest('https://senators-crud-app.firebaseio.com/senators.json' + queryParams, 'GET')     
       
       }

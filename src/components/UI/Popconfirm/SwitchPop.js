@@ -32,7 +32,7 @@ export const MyPopover = props => {
     };
     const confirm = (e) => {
         console.log(e);
-        if (props.confirmMsg) { message.success(props.confirmMsg) };
+        // if (props.confirmMsg) { message.info(props.confirmMsg) };
     props.confirmAction()
     }
     

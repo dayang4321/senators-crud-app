@@ -71,11 +71,11 @@ const SenatorForm = React.memo(props => {
     const submitHandler = event => {
   //   event.preventDefault();
       props.addSenHandler({
-        firstName: inputedFirstName,
-        lastName: inputedLastName,
+        firstName: inputedFirstName.toLowerCase(),
+        lastName: inputedLastName.toLowerCase(),
         phone: inputedPhone,
         email: inputedEmail,
-        state: inputedState,
+        state: inputedState.toLowerCase(),
         constituency: inputedConstituency
       });
       ;

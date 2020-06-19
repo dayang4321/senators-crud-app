@@ -4,10 +4,11 @@ import EditModal from '../Form Modals/EditModal'
 import './SenatorsList.css';
 import { IconButton } from '@material-ui/core'
 import { Tooltip } from 'antd';
-import { Skeleton } from 'antd';
+import { Skeleton } from '@material-ui/lab';
 import { Spin } from 'antd';
 import { MyPopconfirm } from '../../../components/UI/Popconfirm/Popconfirm'
-import {MyPopover} from '../../../components/UI/Popconfirm/SwitchPop'
+import { MyPopover } from '../../../components/UI/Popconfirm/SwitchPop'
+import {capitalize} from '../../../shared/utility'
 
 const SenatorsList = React.memo(props => {
   
@@ -28,7 +29,14 @@ setCurrentSenator({})
   };
   let senateList = <p>Add senators!</p>;
 
-  if (props.senators) {  senateList = props.senators.map(senator => (
+
+
+  if (props.senators) {
+    let cappedSenators = props.senators.map(senator => capitalize(senator));
+   
+
+    
+    senateList = cappedSenators.map(senator => (
     <li key={senator.id}>
       <p>{'Senator ' + senator.firstName + ' '+ senator.lastName + ' of ' + senator.state + ' ' + senator.constituency}</p>
       <span>
@@ -68,7 +76,7 @@ setCurrentSenator({})
     <section className="senators-list">
       <h2>The Senate <span style={{textAlign: 'right'}}>{props.load? <Spin/>:null}</span> </h2>
       <ul>
-        {!props.fetchLoad ? senateList : <Skeleton loading={true} />}
+        {! props.fetchLoad ? senateList : <Skeleton  loading={true} />}
       </ul>
       </section>
       </>
